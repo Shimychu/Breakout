@@ -78,7 +78,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>F:\vcpkg-master\installed\x64-windows\include;F:\Repo\Breakout\Breakout\include;$(IncludePath)</IncludePath>
+    <IncludePath>F:\Repo\Breakout\Breakout\include\GLFW;F:\Repo\Breakout\Breakout\include\KHR;F:\Repo\Breakout\Breakout\include\glad;F:\Repo\Breakout\Breakout\include;$(IncludePath)</IncludePath>
     <LibraryPath>F:\Repo\Breakout\Breakout\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -142,12 +142,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
+    <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Texture.h" />
   </ItemGroup>

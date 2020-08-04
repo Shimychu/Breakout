@@ -19,7 +19,7 @@ public:
 	Shader() { }
 
 	//sets the current shader as active
-	Shader& Use();
+	Shader &Use();
 
 	//Compiles the shader from given source code
 	void Compile(const char* vertexSource, const char* fragmentSource, const char* geometrySource = nullptr);

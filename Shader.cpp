@@ -2,6 +2,12 @@
 
 #include <iostream>
 
+Shader& Shader::Use()
+{
+	glUseProgram(this->ID);
+	return *this;
+}
+
 void Shader::Compile(const char* vertexSource, const char* fragmentSource, const char* geometrySource) {
 
 	unsigned int sVertex, sFragment, gShader;
