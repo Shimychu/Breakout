@@ -1,3 +1,4 @@
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -5,6 +6,7 @@
 #include "ResourceManager.h"
 
 #include <iostream>
+
 
 
 // GLFW functions
@@ -22,8 +24,10 @@ int main(int argc, char* argv[])
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-
 	glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
+#ifdef __APPLE__
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
 	glfwWindowHint(GLFW_RESIZABLE, false);
 
 	GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Breakout", nullptr, nullptr);
@@ -32,10 +36,15 @@ int main(int argc, char* argv[])
 	// Glad load all Open GL function pointers
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
-		glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA , GL_ONE_MINUS_SRC_ALPHA);
+		return -1;
 	}
+
+	glfwSetKeyCallback(window, key_callback);
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Initalize game
 	Breakout.Init();
@@ -45,7 +54,7 @@ int main(int argc, char* argv[])
 	float lastFrame = 0.0f;
 
 	// Starting game
-	Breakout.State = GAME_MENU;
+	Breakout.State = GAME_ACTIVE;
 
 	while (!glfwWindowShouldClose(window))
 	{

@@ -36,6 +36,12 @@
     <ClCompile Include="Sprite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GameObj.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameLevel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -53,5 +59,48 @@
     <ClInclude Include="Sprite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GameObj.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameLevel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="awesomeface.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\background.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\block.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\block_solid.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Images\paddle.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="sprite.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="sprite.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="levels\four.lvl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="levels\one.lvl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="levels\three.lvl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="levels\two.lvl">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
