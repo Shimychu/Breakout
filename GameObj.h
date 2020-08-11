@@ -1,5 +1,5 @@
 
-#ifndef GAMEOBJ_h
+#ifndef GAMEOBJ_H
 #define GAMEOBJ_H
 
 #include <glad/glad.h>
@@ -13,7 +13,6 @@
 // Each object in the game needs minimal states as described with game object constructor.
 class GameObj
 {
-
 public:
 	glm::vec2 position, size, velocity;
 	glm::vec3 color;
