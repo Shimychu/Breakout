@@ -13,6 +13,9 @@
 
 #include "GameLevel.h"
 
+#include "BallObject.h"
+
+
 enum GameState{
 	GAME_ACTIVE,
 	GAME_MENU,
@@ -41,10 +44,14 @@ class Game
 		void ProcessInput(float dt);
 		void Update(float dt);
 		void Render();
+		void DoCollisions();
+		
 
 private:
 	void loadTexture();
 	void loadLevels();
+	bool CheckCollision(BallObject& one, GameObj& two);
+	
 };
 
 #endif

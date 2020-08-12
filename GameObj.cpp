@@ -13,3 +13,4 @@ void GameObj::Draw(Sprite& renderer)
 {
 	renderer.DrawSprite(this->sprite, this->position, this->size, this->rotation, this->color);
 }
+

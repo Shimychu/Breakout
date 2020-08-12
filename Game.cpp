@@ -1,11 +1,11 @@
 #include "Game.h"
 
 #include <iostream>
+#include <algorithm>
 
 #include "ResourceManager.h"
 #include "Sprite.h"
 #include "GameObj.h"
-#include "BallObject.h"
 
 // Game setting inital ball speed
 const glm::vec2 INITIAL_BALL_VELOCITY(100.0f, -350.0f);
@@ -64,6 +64,7 @@ void Game::Init()
 void Game::Update(float dt)
 {
 	Ball->Move(dt, this->Width);
+	this->DoCollisions();
 }
 
 void Game::ProcessInput(float dt)
@@ -115,6 +116,18 @@ void Game::Render()
 	}
 }
 
+void Game::DoCollisions()
+{
+	for (GameObj& box : this->Levels[this->Level].Bricks) {
+		if (!box.destroyed && CheckCollision(*Ball, box) && !box.isSolid)
+		{
+			box.destroyed = true;
+		}
+	}
+}
+
+/* PRIVATE FUNCTIONS */
+
 void Game::loadTexture()
 {
 	ResourceManager::LoadTexture("F:\\Repo\\Breakout\\Breakout\\Images\\background.jpg", false, "background");
@@ -141,4 +154,28 @@ void Game::loadLevels()
 	this->Levels.push_back(three);
 	this->Levels.push_back(four);
 	this->Level = 0;
+}
+
+bool Game::CheckCollision(BallObject& one, GameObj& two)
+{
+	glm::vec2 center(one.position + one.radius);
+	glm::vec2 aabb_half_extents(two.size.x / 2.0f, two.size.y / 2.0f);
+	glm::vec2 aabb_center(
+		two.position.x + aabb_half_extents.x,
+		two.position.y + aabb_half_extents.y
+	);
+
+	glm::vec2 difference = center - aabb_center;
+	glm::vec2 clamped = glm::clamp(difference, -aabb_half_extents, aabb_half_extents);
+
+	glm::vec2 closest = aabb_center + clamped;
+
+	difference = closest - center;
+	return glm::length(difference) < one.radius;
+}
+
+
+// Clamps a value to a value within given range.
+float clamp(float value, float min, float max) {
+	return std::max(min, std::min(max, value));
 }
