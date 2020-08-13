@@ -15,12 +15,24 @@
 
 #include "BallObject.h"
 
+enum Direction {
+	UP,
+	RIGHT,
+	DOWN,
+	LEFT
+};
 
 enum GameState{
 	GAME_ACTIVE,
 	GAME_MENU,
 	GAME_WIN
 };
+
+
+// Defines a Collision typedef that represents collision data
+// <collision?, what direction?, difference vector center - closest point>
+typedef std::tuple<bool, Direction, glm::vec2> Collision; 
+
 
 const glm::vec2 PLAYER_SIZE(100.0f, 20.0f);
 
@@ -45,12 +57,16 @@ class Game
 		void Update(float dt);
 		void Render();
 		void DoCollisions();
+
+		// reset
+		void ResetLevel();
+		void ResetPlayer();
 		
 
 private:
 	void loadTexture();
 	void loadLevels();
-	bool CheckCollision(BallObject& one, GameObj& two);
+	Collision CheckCollision(BallObject& one, GameObj& two);
 	
 };
 
