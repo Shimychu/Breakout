@@ -117,6 +117,30 @@ void Game::ProcessInput(float dt)
 			}
 
 		}
+		if (this->Keys[GLFW_KEY_1])
+		{
+			this->ResetLevel();
+			this->Level = 0;
+			this->ResetPlayer();
+		}
+		if (this->Keys[GLFW_KEY_2])
+		{
+			this->ResetLevel();
+			this->Level = 1;
+			this->ResetPlayer();
+		}
+		if (this->Keys[GLFW_KEY_3])
+		{
+			this->ResetLevel();
+			this->Level = 2;
+			this->ResetPlayer();	
+		}
+		if (this->Keys[GLFW_KEY_4])
+		{
+			this->ResetLevel();
+			this->Level = 3;
+			this->ResetPlayer();
+		}
 		if (this->Keys[GLFW_KEY_SPACE])
 			Ball->stuck = false;
 	}

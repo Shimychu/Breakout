@@ -148,6 +148,7 @@
     <ClCompile Include="GameObj.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ParticleGenerator.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Sprite.cpp" />
@@ -158,6 +159,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameLevel.h" />
     <ClInclude Include="GameObj.h" />
+    <ClInclude Include="ParticleGenerator.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Sprite.h" />
