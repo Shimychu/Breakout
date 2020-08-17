@@ -12,7 +12,7 @@ void ParticleGenerator::Update(float dt, GameObj& obj, unsigned int newParticles
 	for (unsigned int i = 0; i < newParticles; ++i)
 	{
 		int unusedParticle = this->firstUnusedParticle();
-		this->respawnParticle(this->particles[unusedParticle], object, offset);
+		this->respawnParticle(this->particles[unusedParticle], obj, offset);
 	}
 	
 	// Update all exisiting particles
