@@ -6,6 +6,7 @@
 #include "ResourceManager.h"
 #include "Sprite.h"
 #include "GameObj.h"
+#include "ParticleGenerator.h"
 
 // Game setting inital ball speed
 const glm::vec2 INITIAL_BALL_VELOCITY(100.0f, -350.0f);
@@ -16,6 +17,7 @@ const float BALL_RADIUS = 12.5f;
 Sprite* Renderer;
 GameObj* Player;
 BallObject* Ball;
+ParticleGenerator* Particles;
 
 Game::Game(unsigned int width, unsigned int height)
 	: State(GAME_ACTIVE), Keys(), Width(width), Height(height)
@@ -27,6 +29,8 @@ Game::~Game()
 {
 	delete Renderer;
 	delete Player;
+	delete Ball;
+	delete Particles;
 }
 
 
@@ -34,12 +38,16 @@ void Game::Init()
 {
 	// Load Shaders
 	ResourceManager::LoadShader("sprite.vs", "sprite.fs", nullptr, "sprite");
+	ResourceManager::LoadShader("particle.vs", "particle.fs", nullptr, "particle");
 
 	// Configure Shaders
 	glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(this->Width),static_cast<float>(this->Height), 0.0f, -1.0f, 1.0f);
 
 	ResourceManager::GetShader("sprite").Use().SetInteger("image", 0);
 	ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
+	ResourceManager::GetShader("particle").Use().SetInteger("sprite", 0);
+	ResourceManager::GetShader("particle").SetMatrix4("projection", projection);
+
 
 	// Set render specific controls
 	Renderer = new Sprite(ResourceManager::GetShader("sprite"));
@@ -47,6 +55,11 @@ void Game::Init()
 	// Load Texture
 	loadTexture();
 
+	Particles = new ParticleGenerator(
+		ResourceManager::GetShader("particle"),
+		ResourceManager::GetTexture("particle"),
+		400
+	);
 	// Load Levels
 	loadLevels();
 
@@ -59,12 +72,16 @@ void Game::Init()
 	glm::vec2 ballPos = playerPos + glm::vec2(PLAYER_SIZE.x / 2.0f - BALL_RADIUS, -BALL_RADIUS * 2.0f);
 
 	Ball = new BallObject(ballPos, BALL_RADIUS, INITIAL_BALL_VELOCITY, ResourceManager::GetTexture("face"));
+
+
 }
 
 void Game::Update(float dt)
 {
 	Ball->Move(dt, this->Width);
 	this->DoCollisions();
+	//if(!Ball->stuck)
+		Particles->Update(dt, *Ball, 2, glm::vec2(Ball->radius / 2.0f));
 	if (Ball->position.y >= this->Height)
 	{
 		this->ResetLevel();
@@ -161,6 +178,9 @@ void Game::Render()
 		// draw player
 		Player->Draw(*Renderer);
 
+		// draw particles
+		Particles->Draw();
+
 		// draw ball
 		Ball->Draw(*Renderer);
 	}
@@ -232,6 +252,7 @@ void Game::loadTexture()
 	ResourceManager::LoadTexture("F:\\Repo\\Breakout\\Breakout\\Images\\mushroom_Square.png", false, "block");
 	ResourceManager::LoadTexture("F:\\Repo\\Breakout\\Breakout\\Images\\slime_solid.png", false, "block_solid");
 	ResourceManager::LoadTexture("F:\\Repo\\Breakout\\Breakout\\Images\\paddle.png", true, "paddle");
+	ResourceManager::LoadTexture("F:\\Repo\\Breakout\\Breakout\\Images\\particle_orange_circle.png", true, "particle");
 }
 
 void Game::loadLevels()
