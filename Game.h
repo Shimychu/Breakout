@@ -14,6 +14,7 @@
 #include "GameLevel.h"
 
 #include "BallObject.h"
+#include "PowerUp.h"
 
 enum Direction {
 	UP,
@@ -46,6 +47,7 @@ class Game
 		unsigned int Width, Height;
 
 		std::vector<GameLevel> Levels;
+		std::vector<PowerUp> PowerUps;
 		unsigned int Level;
 
 		Game(unsigned int width, unsigned int height);
@@ -61,12 +63,17 @@ class Game
 		// reset
 		void ResetLevel();
 		void ResetPlayer();
+
+		// Power up
+		void SpawnPowerUps(GameObj& block);
+		void UpdatePowerUps(float dt);
 		
 
 private:
 	void loadTexture();
 	void loadLevels();
 	Collision CheckCollision(BallObject& one, GameObj& two);
+	bool CheckCollision(GameObj& one, GameObj& two);
 	
 };
 
