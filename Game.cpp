@@ -7,6 +7,7 @@
 #include "Sprite.h"
 #include "GameObj.h"
 #include "ParticleGenerator.h"
+#include "PostProcessing.h"
 
 // Game setting inital ball speed
 const glm::vec2 INITIAL_BALL_VELOCITY(100.0f, -350.0f);
@@ -14,10 +15,14 @@ const glm::vec2 INITIAL_BALL_VELOCITY(100.0f, -350.0f);
 // Radius of ball object
 const float BALL_RADIUS = 12.5f;
 
+// Related Game Class States
 Sprite* Renderer;
 GameObj* Player;
 BallObject* Ball;
 ParticleGenerator* Particles;
+PostProcessing* Effects;
+
+float ShakeTime = 0.0f;
 
 Game::Game(unsigned int width, unsigned int height)
 	: State(GAME_ACTIVE), Keys(), Width(width), Height(height)
@@ -31,6 +36,7 @@ Game::~Game()
 	delete Player;
 	delete Ball;
 	delete Particles;
+	delete Effects;
 }
 
 
@@ -39,6 +45,7 @@ void Game::Init()
 	// Load Shaders
 	ResourceManager::LoadShader("sprite.vs", "sprite.fs", nullptr, "sprite");
 	ResourceManager::LoadShader("particle.vs", "particle.fs", nullptr, "particle");
+	ResourceManager::LoadShader("postprocessing.vs", "postprocessing.fs", nullptr, "postprocessing");
 
 	// Configure Shaders
 	glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(this->Width),static_cast<float>(this->Height), 0.0f, -1.0f, 1.0f);
@@ -48,12 +55,13 @@ void Game::Init()
 	ResourceManager::GetShader("particle").Use().SetInteger("sprite", 0);
 	ResourceManager::GetShader("particle").SetMatrix4("projection", projection);
 
+	// Load Texture
+	loadTexture();
+
 
 	// Set render specific controls
 	Renderer = new Sprite(ResourceManager::GetShader("sprite"));
-
-	// Load Texture
-	loadTexture();
+	Effects = new PostProcessing(ResourceManager::GetShader("postprocessing"), this->Width, this->Height);
 
 	Particles = new ParticleGenerator(
 		ResourceManager::GetShader("particle"),
@@ -87,18 +95,24 @@ void Game::Update(float dt)
 		this->ResetLevel();
 		this->ResetPlayer();
 	}
+	if (ShakeTime > 0.0f)
+	{
+		ShakeTime -= dt/2;
+		if (ShakeTime <= 0.0f)
+			Effects->Shake = false;
+	}
 }
 
 void Game::ResetLevel()
 {
 	if (this->Level == 0)
-		this->Levels[0].Load("F:\\Repo\\Breakout\\Breakout\\levels\\one.lvl", this->Width, this->Height / 2);
+		this->Levels[0].Load("E:\\Repo\\Breakout\\Breakout\\levels\\one.lvl", this->Width, this->Height / 2);
 	else if (this->Level == 1)
-		this->Levels[1].Load("F:\\Repo\\Breakout\\Breakout\\levels\\two.lvl", this->Width, this->Height / 2);
+		this->Levels[1].Load("E:\\Repo\\Breakout\\Breakout\\levels\\two.lvl", this->Width, this->Height / 2);
 	else if (this->Level == 2)
-		this->Levels[2].Load("F:\\Repo\\Breakout\\Breakout\\levels\\three.lvl", this->Width, this->Height / 2);
+		this->Levels[2].Load("E:\\Repo\\Breakout\\Breakout\\levels\\three.lvl", this->Width, this->Height / 2);
 	else if (this->Level == 3)
-		this->Levels[3].Load("F:\\Repo\\Breakout\\Breakout\\levels\\four.lvl", this->Width, this->Height / 2);
+		this->Levels[3].Load("E:\\Repo\\Breakout\\Breakout\\levels\\four.lvl", this->Width, this->Height / 2);
 }
 
 void Game::ResetPlayer()
@@ -167,6 +181,8 @@ void Game::Render()
 {
 	if (this->State == GAME_ACTIVE)
 	{
+		Effects->BeginRender();
+
 		// draw background
 		Renderer->DrawSprite(ResourceManager::GetTexture("background"),
 			glm::vec2(0.0f, 0.0f), glm::vec2(this->Width, this->Height), 0.0f
@@ -183,6 +199,9 @@ void Game::Render()
 
 		// draw ball
 		Ball->Draw(*Renderer);
+
+		Effects->EndRender();
+		Effects->Render(glfwGetTime());
 	}
 }
 
@@ -197,6 +216,11 @@ void Game::DoCollisions()
 			{
 				if (!box.isSolid)
 					box.destroyed = true;
+				else {
+					//Block is solid
+					ShakeTime = 0.02f;
+					Effects->Shake = true;
+				}
 				// Get 1 - returns direction enum
 				// Get 2 - returns vector
 				Direction dir = std::get<1>(collision);
@@ -247,12 +271,12 @@ void Game::DoCollisions()
 
 void Game::loadTexture()
 {
-	ResourceManager::LoadTexture("F:\\Repo\\Breakout\\Breakout\\Images\\maplestory_background.png", true, "background");
-	ResourceManager::LoadTexture("F:\\Repo\\Breakout\\Breakout\\Images\\mushroom.png", true, "face");
-	ResourceManager::LoadTexture("F:\\Repo\\Breakout\\Breakout\\Images\\mushroom_Square.png", false, "block");
-	ResourceManager::LoadTexture("F:\\Repo\\Breakout\\Breakout\\Images\\slime_solid.png", false, "block_solid");
-	ResourceManager::LoadTexture("F:\\Repo\\Breakout\\Breakout\\Images\\paddle.png", true, "paddle");
-	ResourceManager::LoadTexture("F:\\Repo\\Breakout\\Breakout\\Images\\particle_orange_circle.png", true, "particle");
+	ResourceManager::LoadTexture("E:\\Repo\\Breakout\\Breakout\\Images\\maplestory_background1.png", true, "background");
+	ResourceManager::LoadTexture("E:\\Repo\\Breakout\\Breakout\\Images\\mushroom.png", true, "face");
+	ResourceManager::LoadTexture("E:\\Repo\\Breakout\\Breakout\\Images\\mushroom_Square.png", false, "block");
+	ResourceManager::LoadTexture("E:\\Repo\\Breakout\\Breakout\\Images\\slime_solid.png", false, "block_solid");
+	ResourceManager::LoadTexture("E:\\Repo\\Breakout\\Breakout\\Images\\paddle.png", true, "paddle");
+	ResourceManager::LoadTexture("E:\\Repo\\Breakout\\Breakout\\Images\\particle_orange_circle.png", true, "particle");
 }
 
 void Game::loadLevels()
@@ -262,10 +286,10 @@ void Game::loadLevels()
 	GameLevel three; 
 	GameLevel four; 
 
-	one.Load("F:\\Repo\\Breakout\\Breakout\\levels\\one.lvl", this->Width, this->Height / 2);
-	two.Load("F:\\Repo\\Breakout\\Breakout\\levels\\two.lvl", this->Width, this->Height / 2);
-	three.Load("F:\\Repo\\Breakout\\Breakout\\levels\\three.lvl", this->Width, this->Height / 2);
-	four.Load("F:\\Repo\\Breakout\\Breakout\\levels\\four.lvl", this->Width, this->Height / 2);
+	one.Load("E:\\Repo\\Breakout\\Breakout\\levels\\one.lvl", this->Width, this->Height / 2);
+	two.Load("E:\\Repo\\Breakout\\Breakout\\levels\\two.lvl", this->Width, this->Height / 2);
+	three.Load("E:\\Repo\\Breakout\\Breakout\\levels\\three.lvl", this->Width, this->Height / 2);
+	four.Load("E:\\Repo\\Breakout\\Breakout\\levels\\four.lvl", this->Width, this->Height / 2);
 
 	this->Levels.push_back(one);
 	this->Levels.push_back(two);

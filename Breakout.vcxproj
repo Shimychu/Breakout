@@ -78,8 +78,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>F:\Repo\Breakout\Breakout\include\GLFW;F:\Repo\Breakout\Breakout\include\KHR;F:\Repo\Breakout\Breakout\include\glad;F:\Repo\Breakout\Breakout\include;$(IncludePath)</IncludePath>
-    <LibraryPath>F:\Repo\Breakout\Breakout\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>E:\Repo\Breakout\Breakout\include\GLFW;E:\Repo\Breakout\Breakout\include\KHR;E:\Repo\Breakout\Breakout\include\glad;E:\Repo\Breakout\Breakout\include;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\Repo\Breakout\Breakout\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -149,6 +149,7 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ParticleGenerator.cpp" />
+    <ClCompile Include="PostProcessing.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Sprite.cpp" />
@@ -159,7 +160,9 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameLevel.h" />
     <ClInclude Include="GameObj.h" />
+    <ClInclude Include="include\glad\glad.h" />
     <ClInclude Include="ParticleGenerator.h" />
+    <ClInclude Include="PostProcessing.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Sprite.h" />
