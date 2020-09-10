@@ -88,8 +88,8 @@ void Game::Update(float dt)
 {
 	Ball->Move(dt, this->Width);
 	this->DoCollisions();
-	//if(!Ball->stuck)
-		Particles->Update(dt, *Ball, 2, glm::vec2(Ball->radius / 2.0f));
+	Particles->Update(dt, *Ball, 2, glm::vec2(Ball->radius / 2.0f));
+	this->UpdatePowerUps(dt);
 	if (Ball->position.y >= this->Height)
 	{
 		this->ResetLevel();
@@ -254,11 +254,12 @@ void ActivatePowerUp(PowerUp& powerUp)
 	}
 	else if (powerUp.Type == "pass-through")
 	{
-
+		Ball->transparent = true;
+		Ball->color = glm::vec3(1.0f, 0.5f, 0.5f);
 	}
 	else if (powerUp.Type == "pad-size-increase")
 	{
-
+		Player->size.x += 50;
 	}
 	else if (powerUp.Type == "ball-increase")
 	{
@@ -266,11 +267,13 @@ void ActivatePowerUp(PowerUp& powerUp)
 	}
 	else if (powerUp.Type == "confuse")
 	{
-
+		if (!Effects->Chaos)
+			Effects->Confuse = true;
 	}
 	else if (powerUp.Type == "chaos")
 	{
-
+		if (!Effects->Confuse)
+			Effects->Chaos = true;
 	}
 }
 
@@ -338,7 +341,8 @@ void Game::UpdatePowerUps(float dt)
 
 void Game::DoCollisions()
 {
-	for (GameObj& box : this->Levels[this->Level].Bricks) {
+	for (GameObj& box : this->Levels[this->Level].Bricks)
+	{
 		if (!box.destroyed)
 		{
 			Collision collision = CheckCollision(*Ball, box);
@@ -370,7 +374,7 @@ void Game::DoCollisions()
 						else
 							Ball->position.x -= penetration;
 					}
-					else if (dir == UP || dir == DOWN)
+					else
 					{
 						Ball->velocity.y = -Ball->velocity.y;
 
@@ -380,12 +384,10 @@ void Game::DoCollisions()
 						else
 							Ball->position.y += penetration;
 					}
-					else {
-						// Do nothing
-					}
 				}
 			}
 		}
+	}
 		for (PowerUp& powerUp : this->PowerUps)
 		{
 			if (!powerUp.destroyed)
@@ -402,7 +404,6 @@ void Game::DoCollisions()
 
 			}
 		}
-	}
 
 	Collision result = CheckCollision(*Ball, *Player);
 	if (!Ball->stuck && std::get<0>(result))
