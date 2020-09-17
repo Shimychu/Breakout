@@ -2,12 +2,17 @@
 
 #include <iostream>
 #include <algorithm>
+#include <irrKlang/irrKlang.h>
+using namespace irrklang;
 
 #include "ResourceManager.h"
 #include "Sprite.h"
 #include "GameObj.h"
 #include "ParticleGenerator.h"
 #include "PostProcessing.h"
+
+
+
 
 // Game setting inital ball speed
 const glm::vec2 INITIAL_BALL_VELOCITY(100.0f, -350.0f);
@@ -21,6 +26,7 @@ GameObj* Player;
 BallObject* Ball;
 ParticleGenerator* Particles;
 PostProcessing* Effects;
+ISoundEngine* SoundEngine = createIrrKlangDevice();
 
 float ShakeTime = 0.0f;
 
@@ -81,7 +87,8 @@ void Game::Init()
 
 	Ball = new BallObject(ballPos, BALL_RADIUS, INITIAL_BALL_VELOCITY, ResourceManager::GetTexture("face"));
 
-
+	// Init sound
+	SoundEngine->play2D("E:\\Repo\\Breakout\\Breakout\\music\\bgm.mp3", true);
 }
 
 void Game::Update(float dt)
@@ -121,6 +128,12 @@ void Game::ResetPlayer()
 	Player->size = PLAYER_SIZE;
 	Player->position = glm::vec2(this->Width / 2.0f - PLAYER_SIZE.x / 2.0f, this->Height - PLAYER_SIZE.y);
 	Ball->Reset(Player->position + glm::vec2(PLAYER_SIZE.x / 2.0f - BALL_RADIUS, -(BALL_RADIUS * 2.0f)), INITIAL_BALL_VELOCITY);
+
+	// also disable all active powerups
+	Effects->Chaos = Effects->Confuse = false;
+	Ball->transparent = Ball->sticky = false;
+	Player->color = glm::vec3(1.0f);
+	Ball->color = glm::vec3(1.0f);
 }
 
 
@@ -200,6 +213,7 @@ void Game::Render()
 		// draw ball
 		Ball->Draw(*Renderer);
 
+		// draw powerups
 		for (PowerUp& powerUp : this->PowerUps)
 			if (!powerUp.destroyed)
 				powerUp.Draw(*Renderer);
@@ -353,11 +367,13 @@ void Game::DoCollisions()
 				{
 					box.destroyed = true;
 					this->SpawnPowerUps(box);
+					SoundEngine->play2D("E:\\Repo\\Breakout\\Breakout\\music\\beep.mp3", false);
 				}
 				else {
 					//Block is solid
 					ShakeTime = 0.02f;
 					Effects->Shake = true;
+					SoundEngine->play2D("E:\\Repo\\Breakout\\Breakout\\music\\solid.wav", false);
 				}
 				// Get 1 - returns direction enum
 				// Get 2 - returns vector
@@ -400,6 +416,7 @@ void Game::DoCollisions()
 					ActivatePowerUp(powerUp);
 					powerUp.destroyed = true;
 					powerUp.Activated = true;
+					SoundEngine->play2D("E:\\Repo\\Breakout\\Breakout\\music\\powerup.wav", false);
 				}
 
 			}
@@ -419,6 +436,8 @@ void Game::DoCollisions()
 		Ball->velocity = glm::normalize(Ball->velocity) * glm::length(oldVelocity);
 
 		Ball->stuck = Ball->sticky;
+
+		SoundEngine->play2D("E:\\Repo\\Breakout\\Breakout\\music\\bleep.wav", false);
 	}
 
 }
