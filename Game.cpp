@@ -367,7 +367,7 @@ void Game::DoCollisions()
 				{
 					box.destroyed = true;
 					this->SpawnPowerUps(box);
-					SoundEngine->play2D("E:\\Repo\\Breakout\\Breakout\\music\\beep.mp3", false);
+					SoundEngine->play2D("E:\\Repo\\Breakout\\Breakout\\music\\beep.wav", false);
 				}
 				else {
 					//Block is solid
