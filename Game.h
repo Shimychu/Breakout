@@ -68,6 +68,7 @@ class Game
 		void SpawnPowerUps(GameObj& block);
 		void UpdatePowerUps(float dt);
 		
+		unsigned int Lives;
 
 private:
 	void loadTexture();

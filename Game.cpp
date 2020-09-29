@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <sstream>
 #include <irrKlang/irrKlang.h>
 using namespace irrklang;
 
@@ -10,6 +11,7 @@ using namespace irrklang;
 #include "GameObj.h"
 #include "ParticleGenerator.h"
 #include "PostProcessing.h"
+#include "TextRender.h"
 
 
 
@@ -27,11 +29,12 @@ BallObject* Ball;
 ParticleGenerator* Particles;
 PostProcessing* Effects;
 ISoundEngine* SoundEngine = createIrrKlangDevice();
+TextRender* Text;
 
 float ShakeTime = 0.0f;
 
 Game::Game(unsigned int width, unsigned int height)
-	: State(GAME_ACTIVE), Keys(), Width(width), Height(height)
+	: State(GAME_ACTIVE), Keys(), Width(width), Height(height), Lives(3)
 {
 
 }
@@ -77,6 +80,7 @@ void Game::Init()
 	// Load Levels
 	loadLevels();
 
+
 	glm::vec2 playerPos = glm::vec2(
 		this->Width / 2.0f - PLAYER_SIZE.x / 2.0f,
 		this->Height - PLAYER_SIZE.y
@@ -89,6 +93,13 @@ void Game::Init()
 
 	// Init sound
 	SoundEngine->play2D("E:\\Repo\\Breakout\\Breakout\\music\\bgm.mp3", true);
+
+	// Init Text
+	Text = new TextRender(this->Width, this->Height);
+	Text->Load("E:\\Repo\\Breakout\\Breakout\\fonts\\cour.ttf",24);
+
+	this->ResetLevel();
+	this->ResetPlayer();
 }
 
 void Game::Update(float dt)
@@ -99,12 +110,17 @@ void Game::Update(float dt)
 	this->UpdatePowerUps(dt);
 	if (Ball->position.y >= this->Height)
 	{
-		this->ResetLevel();
+		--this->Lives;
+		if (this->Lives == 0)
+		{
+			this->ResetLevel();
+			this->State = GAME_MENU;
+		}
 		this->ResetPlayer();
 	}
 	if (ShakeTime > 0.0f)
 	{
-		ShakeTime -= dt/2;
+		ShakeTime -= dt / 2;
 		if (ShakeTime <= 0.0f)
 			Effects->Shake = false;
 	}
@@ -120,6 +136,8 @@ void Game::ResetLevel()
 		this->Levels[2].Load("E:\\Repo\\Breakout\\Breakout\\levels\\three.lvl", this->Width, this->Height / 2);
 	else if (this->Level == 3)
 		this->Levels[3].Load("E:\\Repo\\Breakout\\Breakout\\levels\\four.lvl", this->Width, this->Height / 2);
+
+	this->Lives = 3;
 }
 
 void Game::ResetPlayer()
@@ -220,6 +238,9 @@ void Game::Render()
 
 		Effects->EndRender();
 		Effects->Render(glfwGetTime());
+
+		std::stringstream ss; ss << this->Lives;
+		Text->RenderText("Lives:" + ss.str(), 5.0f, 5.0f, 1.0f);
 	}
 }
 
@@ -283,11 +304,13 @@ void ActivatePowerUp(PowerUp& powerUp)
 	{
 		if (!Effects->Chaos)
 			Effects->Confuse = true;
+		powerUp.Duration = powerUp.Duration / 2;
 	}
 	else if (powerUp.Type == "chaos")
 	{
 		if (!Effects->Confuse)
 			Effects->Chaos = true;
+		powerUp.Duration = powerUp.Duration / 2;
 	}
 }
 
