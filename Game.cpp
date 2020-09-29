@@ -258,10 +258,10 @@ void Game::SpawnPowerUps(GameObj& block)
 			PowerUp("speed", glm::vec3(0.5f, 0.5f, 1.0f), 0.0f, block.position, ResourceManager::GetTexture("powerup_speed")));
 	if (ShouldSpawn(50))
 		this->PowerUps.push_back(
-			PowerUp("sticky", glm::vec3(1.0f, 0.5f, 1.0f), 20.0f, block.position, ResourceManager::GetTexture("powerup_sticky")));
+			PowerUp("sticky", glm::vec3(1.0f, 0.5f, 1.0f), 10.0f, block.position, ResourceManager::GetTexture("powerup_sticky")));
 	if (ShouldSpawn(50))
 		this->PowerUps.push_back(
-			PowerUp("pass-through", glm::vec3(0.5f, 1.0f, 0.5f), 10.0f, block.position, ResourceManager::GetTexture("powerup_passthrough")));
+			PowerUp("pass-through", glm::vec3(0.5f, 1.0f, 0.5f), 5.0f, block.position, ResourceManager::GetTexture("powerup_passthrough")));
 	if (ShouldSpawn(50))
 		this->PowerUps.push_back(
 			PowerUp("pad-size-increase", glm::vec3(1.0f, 0.6f, 0.4), 0.0f, block.position, ResourceManager::GetTexture("powerup_increase")));
@@ -270,10 +270,10 @@ void Game::SpawnPowerUps(GameObj& block)
 			PowerUp("ball-increase", glm::vec3(1.0f, 0.6f, 0.4), 0.0f, block.position, ResourceManager::GetTexture("powerup_multi")));
 	if (ShouldSpawn(50))
 		this->PowerUps.push_back(
-			PowerUp("confuse", glm::vec3(1.0f, 0.3f, 0.3f), 15.0f, block.position, ResourceManager::GetTexture("powerup_confuse")));
+			PowerUp("confuse", glm::vec3(1.0f, 0.3f, 0.3f), 2.0f, block.position, ResourceManager::GetTexture("powerup_confuse")));
 	if (ShouldSpawn(50))
 		this->PowerUps.push_back(
-			PowerUp("chaos", glm::vec3(0.9f, 0.25f, 0.25f), 15.0f, block.position, ResourceManager::GetTexture("powerup_chaos")));
+			PowerUp("chaos", glm::vec3(0.9f, 0.25f, 0.25f), 2.0f, block.position, ResourceManager::GetTexture("powerup_chaos")));
 }
 
 void ActivatePowerUp(PowerUp& powerUp)
@@ -304,13 +304,11 @@ void ActivatePowerUp(PowerUp& powerUp)
 	{
 		if (!Effects->Chaos)
 			Effects->Confuse = true;
-		powerUp.Duration = powerUp.Duration / 2;
 	}
 	else if (powerUp.Type == "chaos")
 	{
 		if (!Effects->Confuse)
 			Effects->Chaos = true;
-		powerUp.Duration = powerUp.Duration / 2;
 	}
 }
 
