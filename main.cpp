@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
 	float lastFrame = 0.0f;
 
 	// Starting game
-	Breakout.State = GAME_ACTIVE;
+	Breakout.State = GAME_MENU;
 
 	while (!glfwWindowShouldClose(window))
 	{

@@ -34,7 +34,7 @@ TextRender* Text;
 float ShakeTime = 0.0f;
 
 Game::Game(unsigned int width, unsigned int height)
-	: State(GAME_ACTIVE), Keys(), Width(width), Height(height), Lives(3)
+	: State(GAME_MENU), Keys(), Width(width), Height(height), Lives(3)
 {
 
 }
@@ -46,6 +46,8 @@ Game::~Game()
 	delete Ball;
 	delete Particles;
 	delete Effects;
+	delete Text;
+	SoundEngine->drop();
 }
 
 
@@ -102,6 +104,9 @@ void Game::Init()
 	this->ResetPlayer();
 }
 
+
+
+
 void Game::Update(float dt)
 {
 	Ball->Move(dt, this->Width);
@@ -123,6 +128,12 @@ void Game::Update(float dt)
 		ShakeTime -= dt / 2;
 		if (ShakeTime <= 0.0f)
 			Effects->Shake = false;
+	}
+
+	if (this->State == GAME_ACTIVE && this->Levels[this->Level].isCompleted()) {
+		this->ResetLevel();
+		this->ResetPlayer();
+		this->State = GAME_WIN;
 	}
 }
 
@@ -179,6 +190,40 @@ void Game::ProcessInput(float dt)
 			}
 
 		}
+		//if (this->Keys[GLFW_KEY_1])
+		//{
+		//	this->ResetLevel();
+		//	this->Level = 0;
+		//	this->ResetPlayer();
+		//}
+		//if (this->Keys[GLFW_KEY_2])
+		//{
+		//	this->ResetLevel();
+		//	this->Level = 1;
+		//	this->ResetPlayer();
+		//}
+		//if (this->Keys[GLFW_KEY_3])
+		//{
+		//	this->ResetLevel();
+		//	this->Level = 2;
+		//	this->ResetPlayer();	
+		//}
+		//if (this->Keys[GLFW_KEY_4])
+		//{
+		//	this->ResetLevel();
+		//	this->Level = 3;
+		//	this->ResetPlayer();
+		//}
+		if (this->Keys[GLFW_KEY_SPACE])
+			Ball->stuck = false;
+	}
+	if (this->State == GAME_MENU)
+	{
+		if (this->Keys[GLFW_KEY_ENTER] && !this->KeysProcessed[GLFW_KEY_ENTER])
+		{
+			this->State = GAME_ACTIVE;
+			this->KeysProcessed[GLFW_KEY_ENTER] = true;
+		}
 		if (this->Keys[GLFW_KEY_1])
 		{
 			this->ResetLevel();
@@ -195,7 +240,7 @@ void Game::ProcessInput(float dt)
 		{
 			this->ResetLevel();
 			this->Level = 2;
-			this->ResetPlayer();	
+			this->ResetPlayer();
 		}
 		if (this->Keys[GLFW_KEY_4])
 		{
@@ -203,14 +248,20 @@ void Game::ProcessInput(float dt)
 			this->Level = 3;
 			this->ResetPlayer();
 		}
-		if (this->Keys[GLFW_KEY_SPACE])
-			Ball->stuck = false;
+	}
+	if (this->State == GAME_WIN) 
+	{
+		if (this->Keys[GLFW_KEY_ENTER])
+		{
+			this->KeysProcessed[GLFW_KEY_ENTER] = true;
+			this->State = GAME_MENU;
+		}
 	}
 }
 
 void Game::Render()
 {
-	if (this->State == GAME_ACTIVE)
+	if (this->State == GAME_ACTIVE || this->State == GAME_MENU)
 	{
 		Effects->BeginRender();
 
@@ -241,6 +292,17 @@ void Game::Render()
 
 		std::stringstream ss; ss << this->Lives;
 		Text->RenderText("Lives:" + ss.str(), 5.0f, 5.0f, 1.0f);
+
+	}
+	if (this->State == GAME_MENU)
+	{
+		Text->RenderText("Please ENTER to start", 250.0f, Height / 1.5, 1.0f);
+		Text->RenderText("Press 1 - 4 to select a level", 245.0f, Height / 1.5 + 20.0f, 0.75f);
+	}
+	if (this->State == GAME_WIN)
+	{
+		Text->RenderText("CONGRADULATIONS, YOU'VE WON", 250.0f, Height / 1.5, 1.0f);
+		Text->RenderText("Press Enter to go return back to the menu.", 245.0f, Height / 1.5 + 20.0f, 0.75f);
 	}
 }
 
