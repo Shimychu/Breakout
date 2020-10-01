@@ -119,7 +119,7 @@ void Game::Update(float dt)
 		if (this->Lives == 0)
 		{
 			this->ResetLevel();
-			this->State = GAME_MENU;
+			this->State = GAME_LOSE;
 		}
 		this->ResetPlayer();
 	}
@@ -135,6 +135,7 @@ void Game::Update(float dt)
 		this->ResetPlayer();
 		this->State = GAME_WIN;
 	}
+
 }
 
 void Game::ResetLevel()
@@ -257,6 +258,14 @@ void Game::ProcessInput(float dt)
 			this->State = GAME_MENU;
 		}
 	}
+	if (this->State == GAME_LOSE)
+	{
+		if (this->Keys[GLFW_KEY_ENTER])
+		{
+			this->KeysProcessed[GLFW_KEY_ENTER] = true;
+			this->State = GAME_MENU;
+		}
+	}
 }
 
 void Game::Render()
@@ -303,6 +312,14 @@ void Game::Render()
 	{
 		Text->RenderText("CONGRADULATIONS, YOU'VE WON", 250.0f, Height / 1.5, 1.0f);
 		Text->RenderText("Press Enter to go return back to the menu.", 245.0f, Height / 1.5 + 20.0f, 0.75f);
+	}
+	if (this->State == GAME_LOSE)
+	{
+		Renderer->DrawSprite(ResourceManager::GetTexture("lose"),
+			glm::vec2(0.0f, 0.0f), glm::vec2(this->Width, this->Height), 0.0f
+		);
+		Text->RenderText("You lost all your lives.", 250.0f, Height / 1.5, 1.5f);
+		Text->RenderText("Press Enter to go return back to the menu.", 245.0f, Height / 1.5 + 20.0f, 1.0f);
 	}
 }
 
@@ -530,6 +547,7 @@ void Game::DoCollisions()
 void Game::loadTexture()
 {
 	ResourceManager::LoadTexture("E:\\Repo\\Breakout\\Breakout\\Images\\maplestory_background1.png", true, "background");
+	ResourceManager::LoadTexture("E:\\Repo\\Breakout\\Breakout\\Images\\lose_screen.jpg", false, "lose");
 	ResourceManager::LoadTexture("E:\\Repo\\Breakout\\Breakout\\Images\\mushroom.png", true, "face");
 	ResourceManager::LoadTexture("E:\\Repo\\Breakout\\Breakout\\Images\\mushroom_Square.png", false, "block");
 	ResourceManager::LoadTexture("E:\\Repo\\Breakout\\Breakout\\Images\\slime_solid.png", false, "block_solid");
